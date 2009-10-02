@@ -2,7 +2,7 @@
 ## Title: Broker TankInfo
 ## Notes: Provides information needed by tanks in a ldb-plugin
 ## Author: laroawen
-## Version: 0.1
+## Version: 0.2
 
 localisation.enUS.lua
 localisation.deDE.lua
