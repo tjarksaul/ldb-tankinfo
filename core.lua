@@ -1,6 +1,5 @@
 ﻿local ldb = LibStub:GetLibrary("LibDataBroker-1.1");
 
-TankInfo = LibStub("AceAddon-3.0"):NewAddon("Broker_TankInfo", "AceConsole-3.0", "AceTimer-3.0", "AceEvent-3.0");
 local L = LibStub("AceLocale-3.0"):GetLocale("TankInfo");
 local TankInfo = TankInfo
 
@@ -9,9 +8,10 @@ local doTable = {
 	type = "data source", 
 	text = '|c0066ff00'..L["Avoidance: "]..'|r|c00ff0000'.."UNKNOWN|r", 
 	label = 'Broker TankInfo', 
-	icon = "Interface\\Icons\\Ability_Warrior_DefensiveStance"
+	icon = "Interface\\Icons\\Ability_Warrior_DefensiveStance",
+	OnClick = TankInfo.OnClick(),
 }
-local dataobj = ldb:NewDataObject("tankinfo", doTable)
+TankInfo.dataobj = ldb:NewDataObject("tankinfo", doTable)
 
 -- creating variables
 local level, bosslvl;
@@ -26,10 +26,10 @@ local defaults;
 do
 	defaults = {
 		char = {
+			enabled = true,
 			bosslvl = UnitLevel('player') + 3,
 			r1, g1, b1 = 0,0.4,1,
 			r2, g2, b2 = 0,1,0,
-			enabled = true;
 		}
 	}
 end;
@@ -82,7 +82,7 @@ end
 
 function TankInfo:getBasicMiss()
   local bdef, adef = UnitDefense("player")
-  return (adef + bdef - bosslvl * 5) * 0.04
+  return (adef + bdef - self.db.char.bosslvl * 5) * 0.04
 end
 
 function TankInfo:getArmor()
@@ -99,7 +99,7 @@ end;
 
 function TankInfo:Values()
 	level = UnitLevel("player");
-	bosslvl = level + 3;
+	bosslvl = self.db.char.bosslvl;
 	dodge = GetDodgeChance();
 	parry = GetParryChance();
 	block = floor(GetBlockChance() * 100) / 100;
@@ -125,7 +125,7 @@ end;
 
 function TankInfo:UpdateLDB()
 	self:Values();
-	dataobj.text = '|c000066ff'..L["Avoidance: "]..'|r|c0000ff00'..avoidance.."%|r";
+	TankInfo.dataobj.text = '|c000066ff'..L["Avoidance: "]..'|r|c0000ff00'..avoidance.."%|r";
 end;
 
 function TankInfo:Aura(unit)
@@ -141,28 +141,31 @@ end;
 
 -- what will be printed in the tooltip
 function TankInfo:OnTooltipShow()
+	local r1, g1, b1 = TankInfo.db.char.r1, TankInfo.db.char.g1, TankInfo.db.char.b1
+	local r2, g2, b2 = TankInfo.db.char.r2, TankInfo.db.char.g2, TankInfo.db.char.b2
+	TankInfo:UpdateLDB(); -- updating values before showing tooltip
 	self:AddLine(L['Defense Stats'],1,1,1);
-	self:AddDoubleLine(L['Enemymiss']..': ',(enemymiss + 5)..'%',0,0.4,1,0,0.4,1); -- adds enemymiss line
-	self:AddDoubleLine(L['Dodge']..': ',floor(dodge * 100) / 100 ..'%',0,1,0,0,1,0); -- adds dodge line
-	self:AddDoubleLine(L['Parry']..': ',floor(parry * 100) / 100 ..'%',0,0.4,1,0,0.4,1); -- adds parry line
-	self:AddDoubleLine(L['Avoidance']..': ',avoidance..'%',0,1,0,0,1,0); -- adds avoidance line
-	self:AddDoubleLine(L['dwAvoid']..': ',(avoidance + 24)..'%',0,0.4,1,0,0.4,1); -- adds dw avoidance line
-	self:AddDoubleLine(L['Block Chance']..': ',block..'%',0,1,0,0,1,0); -- adds block chance line
-	self:AddDoubleLine(L['Block Value']..': ',blockvalue,0,0.4,1,0,0.4,1); -- adds block value line
-	self:AddDoubleLine(L['Mitigation']..': ',mitigation..'%',0,1,0,0,1,0); -- adds mitigation line
-	self:AddDoubleLine(L['dwMitigation']..': ',(mitigation + 24)..'%',0,0.4,1,0,0.4,1) -- adds dw mitigation line
-	self:AddDoubleLine(L['NormalHit']..': ',normalhit..'%',0,1,0,0,1,0); -- adds line for chance to get a normal hit
-	self:AddDoubleLine(L['GetCrit']..': ',enemycrit..'%',0,0.4,1,0,0.4,1); -- adds line for chance to get critically hit
+	self:AddDoubleLine(L['Enemymiss']..': ',(enemymiss + 5)..'%',r1, g1, b1,r1, g1, b1); -- adds enemymiss line
+	self:AddDoubleLine(L['Dodge']..': ',floor(dodge * 100) / 100 ..'%',r2, g2, b2,r2, g2, b2); -- adds dodge line
+	self:AddDoubleLine(L['Parry']..': ',floor(parry * 100) / 100 ..'%',r1, g1, b1,r1, g1, b1); -- adds parry line
+	self:AddDoubleLine(L['Avoidance']..': ',avoidance..'%',r2, g2, b2,r2, g2, b2); -- adds avoidance line
+	self:AddDoubleLine(L['dwAvoid']..': ',(avoidance + 24)..'%',r1, g1, b1,r1, g1, b1); -- adds dw avoidance line
+	self:AddDoubleLine(L['Block Chance']..': ',block..'%',r2, g2, b2,r2, g2, b2); -- adds block chance line
+	self:AddDoubleLine(L['Block Value']..': ',blockvalue,r1, g1, b1,r1, g1, b1); -- adds block value line
+	self:AddDoubleLine(L['Mitigation']..': ',mitigation..'%',r2, g2, b2,r2, g2, b2); -- adds mitigation line
+	self:AddDoubleLine(L['dwMitigation']..': ',(mitigation + 24)..'%',r1, g1, b1,r1, g1, b1) -- adds dw mitigation line
+	self:AddDoubleLine(L['NormalHit']..': ',normalhit..'%',r2, g2, b2,r2, g2, b2); -- adds line for chance to get a normal hit
+	self:AddDoubleLine(L['GetCrit']..': ',enemycrit..'%',r1, g1, b1,r1, g1, b1); -- adds line for chance to get critically hit
 	self:AddLine(' '); -- adds empty line
-	self:AddDoubleLine(L['Health']..': ',health,0,0.4,1,0,0.4,1); -- adds health line
-	self:AddDoubleLine(L['ArmorDR']..': ',floor(armorDR * 10000) / 100 ..'%',0,1,0,0,1,0); -- adds line for damage reduction by armor
-	self:AddDoubleLine(L['EH']..': ',eh,0,0.4,1,0,0.4,1); -- adds line for effective health
+	self:AddDoubleLine(L['Health']..': ',health,r1, g1, b1,r1, g1, b1); -- adds health line
+	self:AddDoubleLine(L['ArmorDR']..': ',floor(armorDR * 10000) / 100 ..'%',r2, g2, b2,r2, g2, b2); -- adds line for damage reduction by armor
+	self:AddDoubleLine(L['EH']..': ',eh,r1, g1, b1,r1, g1, b1); -- adds line for effective health
 	self:AddLine(' '); -- adds empty line
-	self:AddLine(L['Enemy is level X'](bosslvl),1,1,1);
+	self:AddDoubleLine(L['Enemy is level'],(bosslvl or "UNKNOWN"),1,1,1,1,1,1);
 end;
 
 -- happens when the mouse joins the ldb dataobject
-function dataobj:OnEnter()
+function TankInfo.dataobj:OnEnter()
 	GameTooltip:SetOwner(self, "ANCHOR_NONE");
 	GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT");
 	GameTooltip:ClearLines();
@@ -171,19 +174,23 @@ function dataobj:OnEnter()
 end;
 
 --happens when the mouse leaves the DO
-function dataobj:OnLeave()
+function TankInfo.dataobj:OnLeave()
 	GameTooltip:Hide();
 end;
 
 -- OnInitialize
 function TankInfo:OnInitialize()
+--@debug@
 	self:Print('OnInitialize');
-	self.db = LibStub("AceDB-3.0"):New("TankInfoDB", defaults, true);
+--@end-debug@
+	self.db = LibStub("AceDB-3.0"):New("TankInfoDB", defaults, "char");
 end;
 
 -- OnEnable
 function TankInfo:OnEnable()
+--@debug@
     self:Print('OnEnable');
+--@end-debug@
 	-- registering events
 	self:RegisterEvent("PLAYER_LEVEL_UP", "levelup");
 	self:RegisterEvent("UNIT_INVENTORY_CHANGED", "Values");
@@ -197,7 +204,9 @@ end;
 
 --OnDisable
 function TankInfo:OnDisable()
+--@debug@
     TankInfo:Print('OnDisable');
+--@end-debug@
 	self:UnregisterEvent("PLAYER_LEVEL_UP");
 	self:UnregisterEvent("UNIT_INVENTORY_CHANGED");
 	self:UnregisterEvent("UNIT_AURA");

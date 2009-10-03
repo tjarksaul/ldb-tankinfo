@@ -2,8 +2,27 @@
 ## Title: Broker TankInfo
 ## Notes: Provides information needed by tanks in a ldb-plugin
 ## Author: laroawen
-## Version: 0.2
+## Version: @project-version@
+## SavedVariables: TankInfoDB
 
-localisation.enUS.lua
-localisation.deDE.lua
+## X-Curse-Packaged-Version: 
+## X-Curse-Project-Name: Broker TankInfo
+## X-Curse-Project-ID: ldb-tankinfo
+## X-Curse-Repository-ID: wow/ldb-tankinfo/mainline
+
+## X-License: Sat's Addon License
+## X-Category: Tank
+
+libs\libs.xml
+
+localization\localization.enUS.lua
+localization\localization.deDE.lua
+localization\localization.frFR.lua
+localization\localization.koKR.lua
+localization\localization.esMX.lua
+localization\localization.ruRU.lua
+localization\localization.zhCN.lua
+localization\localization.esES.lua
+localization\localization.zhTW.lua
+config.lua
 core.lua
