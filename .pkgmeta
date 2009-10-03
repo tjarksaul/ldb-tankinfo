@@ -1,4 +1,4 @@
-﻿license-output: LICENSE.txt
+license-output: LICENSE.txt
 
 tools:
 	- libdatabroker-1-1
@@ -27,3 +27,5 @@ externals:
 
 optional-dependencies:
 	- ace3
+
+package-as: Broker_TankInfo
