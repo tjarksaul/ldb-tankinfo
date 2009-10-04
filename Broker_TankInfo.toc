@@ -5,10 +5,6 @@
 ## Version: @project-version@
 ## SavedVariables: TankInfoDB
 
-## X-Curse-Packaged-Version: 
-## X-Curse-Project-Name: Broker TankInfo
-## X-Curse-Project-ID: ldb-tankinfo
-## X-Curse-Repository-ID: wow/ldb-tankinfo/mainline
 
 ## X-License: Sat's Addon License
 ## X-Category: Tank
