@@ -81,24 +81,10 @@ function TankInfo:getBlockval()
 end
 
 function TankInfo:getBasicMiss()
- local bdef, adef = UnitDefense("player")
+  local bdef, adef = UnitDefense("player")
   return (adef + bdef - self.db.char.bosslvl * 5) * 0.04
 end
 
-function TankInfo:getCalcDodge()
- local bdef, adef = UnitDefense("player")
-  return(GetDodgeChance() - ((adef + bdef - level * 5) * 0.04) + (self:getBasicMiss()));
-end
-
-function TankInfo:getCalcParry()
- local bdef, adef = UnitDefense("player")
-  return (GetParryChance() - ((adef + bdef - level * 5) * 0.04) + (self:getBasicMiss()));
-end
-
-function TankInfo:getCalcBlock()
-  local bdef, adef = UnitDefense("player")
-   return ((GetBlockChance() - ((adef + bdef - level * 5) * 0.04) + (self:getBasicMiss())));
-end
 
 function TankInfo:getArmor()
 	local base, effectiveArmor, armor, posBuff, negBuff = UnitArmor("player");
@@ -115,9 +101,9 @@ end;
 function TankInfo:Values()
 	level = UnitLevel("player");
 	bosslvl = self.db.char.bosslvl;
-	dodge = self:getCalcDodge();
-	parry = self:getCalcParry();
-	block = floor(self:getCalcBlock() * 100) / 100;
+	dodge = GetDodgeChance();
+	parry = GetParryChance();
+	block = floor(GetBlockChance() * 100 + 0.5) / 100;
 	blockvalue = self:getBlockval();
 	enemymiss = self:getBasicMiss();
 	armor = self:getArmor();
@@ -128,7 +114,7 @@ function TankInfo:Values()
 	end;
 	health = UnitHealth("player");
 	eh = floor(health / (1 - armorDR));
-	avoidance = floor((enemymiss + dodge + parry + 5) * 100) / 100;
+	avoidance = floor((enemymiss + dodge + parry + 5) * 100 + 0.5) / 100;
 	mitigation = avoidance + block;
 	if (self:getCritReduce() > 5.6) then
 		enemycrit = 0;
@@ -161,8 +147,8 @@ function TankInfo:OnTooltipShow()
 	TankInfo:UpdateLDB(); -- updating values before showing tooltip
 	self:AddLine(L['Defense Stats'],1,1,1);
 	self:AddDoubleLine(L['Enemymiss']..': ',(enemymiss + 5)..'%',r1, g1, b1,r1, g1, b1); -- adds enemymiss line
-	self:AddDoubleLine(L['Dodge']..': ',floor(dodge * 100) / 100 ..'%',r2, g2, b2,r2, g2, b2); -- adds dodge line
-	self:AddDoubleLine(L['Parry']..': ',floor(parry * 100) / 100 ..'%',r1, g1, b1,r1, g1, b1); -- adds parry line
+	self:AddDoubleLine(L['Dodge']..': ',floor(dodge * 100 + 0.5) / 100 ..'%',r2, g2, b2,r2, g2, b2); -- adds dodge line
+	self:AddDoubleLine(L['Parry']..': ',floor(parry * 100 + 0.5) / 100 ..'%',r1, g1, b1,r1, g1, b1); -- adds parry line
 	self:AddDoubleLine(L['Avoidance']..': ',avoidance..'%',r2, g2, b2,r2, g2, b2); -- adds avoidance line
 	self:AddDoubleLine(L['dwAvoid']..': ',(avoidance + 24)..'%',r1, g1, b1,r1, g1, b1); -- adds dw avoidance line
 	self:AddDoubleLine(L['Block Chance']..': ',block..'%',r2, g2, b2,r2, g2, b2); -- adds block chance line
@@ -173,7 +159,7 @@ function TankInfo:OnTooltipShow()
 	self:AddDoubleLine(L['GetCrit']..': ',enemycrit..'%',r1, g1, b1,r1, g1, b1); -- adds line for chance to get critically hit
 	self:AddLine(' '); -- adds empty line
 	self:AddDoubleLine(L['Health']..': ',health,r1, g1, b1,r1, g1, b1); -- adds health line
-	self:AddDoubleLine(L['ArmorDR']..': ',floor(armorDR * 10000) / 100 ..'%',r2, g2, b2,r2, g2, b2); -- adds line for damage reduction by armor
+	self:AddDoubleLine(L['ArmorDR']..': ',floor(armorDR * 10000 + 0.5) / 100 ..'%',r2, g2, b2,r2, g2, b2); -- adds line for damage reduction by armor
 	self:AddDoubleLine(L['EH']..': ',eh,r1, g1, b1,r1, g1, b1); -- adds line for effective health
 	self:AddLine(' '); -- adds empty line
 	self:AddDoubleLine(L['Enemy is level'],(bosslvl or "UNKNOWN"),1,1,1,1,1,1);
