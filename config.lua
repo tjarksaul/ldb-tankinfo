@@ -3,8 +3,9 @@ local L = LibStub("AceLocale-3.0"):GetLocale("TankInfo");
 local AceConfig = LibStub("AceConfig-3.0");
 local AceConfigCmd = LibStub("AceConfigCmd-3.0");
 local AceConfigDialog = LibStub("AceConfigDialog-3.0");
+local AceConfigRegistry = LibStub("AceConfigRegistry-3.0");
 
-TankInfo.options = {
+TankInfo.blizopt = {
 	type = "group",
 	args = {
 		enable = {
@@ -45,22 +46,34 @@ TankInfo.options = {
 				}
 			}
 		},
-		config = {
-			name = L["Show Options"],
-			desc = L["Shows the blizzard interface options panel"],
+		reset = {
+			name = L["Reset"],
+			desc = L["Reset configuration to defaults"],
 			type = "execute",
---			hidden = function(info) return true,true,true,false end,
-			func = function(info) InterfaceOptionsFrame_OpenToCategory("Broker TankInfo"); end,
-		}
+			func = function(info) TankInfo:ResetToDefaults(); end,
+		},
 	}
 }
 
-AceConfig:RegisterOptionsTable("TankInfo", TankInfo.options, { "/tinfo", "/tankinfo", "/ti" });
+TankInfo.options = {};
+TankInfo.options.type = "group";
+TankInfo.options.args = table.copy(TankInfo.blizopt.args);
+TankInfo.options.args.config = {
+	name = L["Show Options"],
+	desc = L["Shows the blizzard interface options panel"],
+	type = "execute",
+--	hidden = function(info) return true,true,true,false end,
+	func = function(info) InterfaceOptionsFrame_OpenToCategory("Broker TankInfo"); end,
+}
+-- ]]
+
+AceConfig:RegisterOptionsTable("TankInfo", TankInfo.options, { "/tinfo", "/tankinfo", "/ti" }); -- Options for slash command
+AceConfigRegistry:RegisterOptionsTable("Broker TankInfo", TankInfo.blizopt);
 AceConfigCmd:CreateChatCommand("tinfo","TankInfo");
 AceConfigCmd:CreateChatCommand("tankinfo","TankInfo");
 AceConfigCmd:CreateChatCommand("ti","TankInfo");
 
-TankInfo.BlizzOptions = AceConfigDialog:AddToBlizOptions("TankInfo", "Broker TankInfo");
+TankInfo.BlizzOptions = AceConfigDialog:AddToBlizOptions("Broker TankInfo", "Broker TankInfo");
 
 function TankInfo:OnClick(self, button, down)
 	if (button == "RightButton") then
@@ -70,4 +83,8 @@ function TankInfo:OnClick(self, button, down)
 		-- show blizzard options panel
 		InterfaceOptionsFrame_OpenToCategory("Broker TankInfo"); ]]
 	end;
+end;
+
+function TankInfo:ResetToDefaults()
+	self.db:ResetProfile();
 end;

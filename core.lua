@@ -30,6 +30,7 @@ do
 			bosslvl = UnitLevel('player') + 3,
 			r1, g1, b1 = 0,0.4,1,
 			r2, g2, b2 = 0,1,0,
+			already_launched = false;
 		}
 	}
 end;
@@ -185,6 +186,20 @@ function TankInfo:OnInitialize()
 	self:Print('OnInitialize');
 --@end-debug@
 	self.db = LibStub("AceDB-3.0"):New("TankInfoDB", defaults, "char");
+	StaticPopupDialogs["BROKER_TANKINFO_FIRSTLAUNCH"] = {
+		text = L["FirstLaunch"],
+		button1 = OKAY,
+		whileDead = true,
+		timeout = 0,
+		hideOnEscape = true,
+		OnAccept = function()
+			self.db.char.already_launched = true;
+		end,
+		OnCancel = function()
+			self.db.char.already_launched = true;
+		end,
+		notClosableByLogout = true,
+	}
 end;
 
 -- OnEnable
@@ -198,9 +213,12 @@ function TankInfo:OnEnable()
 	self:RegisterEvent("UNIT_AURA", "Aura");
 	-- getting/updating values
 	self:Values();
-	self.updateInterval = self:ScheduleRepeatingTimer("UpdateLDB", 0.5);
+	self.updateInterval = self:ScheduleRepeatingTimer("UpdateLDB", 5);
 	self:UpdateLDB();
 	self.db.char.enabled = true;
+	if not self.db.char.already_launched then
+		StaticPopup_Show("BROKER_TANKINFO_FIRSTLAUNCH");
+	end;
 end;
 
 --OnDisable
