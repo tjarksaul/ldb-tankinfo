@@ -16,5 +16,6 @@
 <!--@end-no-lib-strip@-->
 
 <Script file="LibDataBroker-1.1\LibDataBroker-1.1.lua"/>
+<Script file="LibCopyStuff\LibCopyStuff.lua"/>
 
 </Ui>
