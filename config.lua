@@ -1,3 +1,4 @@
+local addonName, addonData = ...;
 TankInfo = LibStub("AceAddon-3.0"):NewAddon("Broker_TankInfo", "AceConsole-3.0", "AceTimer-3.0", "AceEvent-3.0");
 local L = LibStub("AceLocale-3.0"):GetLocale("TankInfo");
 local AceConfig = LibStub("AceConfig-3.0");
@@ -68,12 +69,12 @@ TankInfo.options.args.config = {
 -- ]]
 
 AceConfig:RegisterOptionsTable("TankInfo", TankInfo.options, { "/tinfo", "/tankinfo", "/ti" }); -- Options for slash command
-AceConfigRegistry:RegisterOptionsTable("Broker TankInfo", TankInfo.blizopt);
+AceConfigRegistry:RegisterOptionsTable(addonName, TankInfo.blizopt);
 AceConfigCmd:CreateChatCommand("tinfo","TankInfo");
 AceConfigCmd:CreateChatCommand("tankinfo","TankInfo");
 AceConfigCmd:CreateChatCommand("ti","TankInfo");
 
-TankInfo.BlizzOptions = AceConfigDialog:AddToBlizOptions("Broker TankInfo", "Broker TankInfo");
+TankInfo.BlizzOptions = AceConfigDialog:AddToBlizOptions(addonName, addonName);
 
 function TankInfo:OnClick(self, button, down)
 	if (button == "RightButton") then

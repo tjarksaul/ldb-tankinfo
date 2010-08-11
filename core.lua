@@ -1,4 +1,5 @@
-﻿local ldb = LibStub:GetLibrary("LibDataBroker-1.1");
+﻿local addonName, addonData = ...;
+local ldb = LibStub:GetLibrary("LibDataBroker-1.1");
 
 local L = LibStub("AceLocale-3.0"):GetLocale("TankInfo");
 local TankInfo = TankInfo
@@ -93,9 +94,10 @@ function TankInfo:getArmor()
 end;
 
 function TankInfo:getCritReduce()
-	local defenseskill = GetCombatRating(CR_DEFENSE_SKILL);
-	local relevant = defenseskill - (level * 5);
-	local reduce = relevant * 0.04;
+	local reduce = GetDodgeBlockParryChanceFromDefense();
+
+
+
 	return reduce;
 end;
 
@@ -117,12 +119,15 @@ function TankInfo:Values()
 	eh = floor(health / (1 - armorDR));
 	avoidance = floor((enemymiss + dodge + parry + 5) * 100 + 0.5) / 100;
 	mitigation = avoidance + block;
-	if (self:getCritReduce() > 5.6) then
-		enemycrit = 0;
-	else
-		enemycrit = 5.6 - self:getCritReduce();
-	end;
+	enemycrit = 5 + (bosslvl - level) * .2;
+
+
+
+	enemycrit = enemycrit - self:getCritReduce();
+	if (enemycrit < 0) then enemycrit = 0 end;
+
 	normalhit = 100 - mitigation;
+	if (normalhit < 0) then normalhit = 0 end;
 end;
 
 function TankInfo:UpdateLDB()
