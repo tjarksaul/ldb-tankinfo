@@ -64,7 +64,7 @@ TankInfo.options.args.config = {
 	desc = L["Shows the blizzard interface options panel"],
 	type = "execute",
 --	hidden = function(info) return true,true,true,false end,
-	func = function(info) InterfaceOptionsFrame_OpenToCategory("Broker TankInfo"); end,
+	func = function(info) InterfaceOptionsFrame_OpenToCategory(addonName); end,
 }
 -- ]]
 
@@ -75,6 +75,9 @@ AceConfigCmd:CreateChatCommand("tankinfo","TankInfo");
 AceConfigCmd:CreateChatCommand("ti","TankInfo");
 
 TankInfo.BlizzOptions = AceConfigDialog:AddToBlizOptions(addonName, addonName);
+--@debug@
+print("Set addonName to " .. addonName);
+--@end-debug@
 
 function TankInfo:OnClick(self, button, down)
 	if (button == "RightButton") then

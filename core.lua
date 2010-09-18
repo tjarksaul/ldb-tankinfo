@@ -12,7 +12,7 @@ local doTable = {
 	icon = "Interface\\Icons\\Ability_Warrior_DefensiveStance",
 	OnClick = TankInfo.OnClick(),
 }
-TankInfo.dataobj = ldb:NewDataObject("tankinfo", doTable)
+TankInfo.dataobj = ldb:NewDataObject("Broker_Tankinfo", doTable)
 
 -- creating variables
 local level, bosslvl;
