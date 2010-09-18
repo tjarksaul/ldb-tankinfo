@@ -146,6 +146,10 @@ function TankInfo:levelup(arg1)
 	self:UpdateLDB();
 end;
 
+function TankInfo:ShowFirstLaunchText()
+	TankInfo:Print(L["FirstLaunch"]);
+end;
+
 -- what will be printed in the tooltip
 function TankInfo:OnTooltipShow()
 	local r1, g1, b1 = TankInfo.db.char.r1, TankInfo.db.char.g1, TankInfo.db.char.b1
@@ -191,6 +195,7 @@ function TankInfo:OnInitialize()
 	self:Print('OnInitialize');
 --@end-debug@
 	self.db = LibStub("AceDB-3.0"):New("TankInfoDB", defaults, "char");
+--[[
 	StaticPopupDialogs["BROKER_TANKINFO_FIRSTLAUNCH"] = {
 		text = L["FirstLaunch"],
 		button1 = OKAY,
@@ -205,6 +210,7 @@ function TankInfo:OnInitialize()
 		end,
 		notClosableByLogout = true,
 	}
+]]
 end;
 
 -- OnEnable
@@ -215,14 +221,14 @@ function TankInfo:OnEnable()
 	-- registering events
 	self:RegisterEvent("PLAYER_LEVEL_UP", "levelup");
 	self:RegisterEvent("UNIT_INVENTORY_CHANGED", "Values");
-	self:RegisterEvent("UNIT_AURA", "Aura");
+--	self:RegisterEvent("UNIT_AURA", "Aura");
 	-- getting/updating values
 	self:Values();
-	self.updateInterval = self:ScheduleRepeatingTimer("UpdateLDB", 5);
+--	self.updateInterval = self:ScheduleRepeatingTimer("UpdateLDB", 5);
 	self:UpdateLDB();
 	self.db.char.enabled = true;
 	if not self.db.char.already_launched then
-		StaticPopup_Show("BROKER_TANKINFO_FIRSTLAUNCH");
+		self:ShowFirstLaunchText();
 	end;
 end;
 
@@ -233,7 +239,7 @@ function TankInfo:OnDisable()
 --@end-debug@
 	self:UnregisterEvent("PLAYER_LEVEL_UP");
 	self:UnregisterEvent("UNIT_INVENTORY_CHANGED");
-	self:UnregisterEvent("UNIT_AURA");
-	self:CancelTimer(self.updateInterval);
+--	self:UnregisterEvent("UNIT_AURA");
+--	self:CancelTimer(self.updateInterval);
 	self.db.char.enabled = false;
 	end;
