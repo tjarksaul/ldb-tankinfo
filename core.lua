@@ -83,8 +83,8 @@ function TankInfo:getBlockval()
 end
 
 function TankInfo:getBasicMiss()
-  local bdef, adef = UnitDefense("player")
-  return (adef + bdef - self.db.char.bosslvl * 5) * 0.04
+  
+  return 5;
 end
 
 
@@ -95,6 +95,43 @@ end;
 
 function TankInfo:getCritReduce()
 	local reduce = GetDodgeBlockParryChanceFromDefense();
+--	local reduce = GetDodgeBlockParryChanceFromDefense();
+	local reduce = 0;
+	reduce = self:getCritReduceByTalents();
+
+	return reduce;
+end;
+
+function TankInfo:getCritReduceByTalents()
+	local numTabs = GetNumTalentTabs(false);
+	local _, clss = UnitClass("player");
+	
+	local reduce = 0;
+	for t=1, numTabs do
+		local numTalents = GetNumTalents(t);
+		for i=1, numTalents do
+			local nameTalent, _, _, _, currRank, _ = GetTalentInfo(t,i);
+			
+			if (clss == "WARRIOR") then -- Warrior
+				if nameTalent == "Bastion of Defense" then -- Bastion of Defense, Protection, Tier 3
+					reduce = reduce + currRank * 3; -- rank is 1..2, values are 3..6 % Crit reduce
+				end;
+			elseif clss == "DEATHKNIGHT" then -- Death Knight
+				if nameTalent == "Improved Blood Presence" then -- Improved Blood Presence, Blood, Tier 4
+					reduce = reduce +  currRank * 3; -- rank is 1..2, values are 3..6 % Crit reduce
+				end;
+			elseif clss == "PALADIN" then -- Paladin
+				if nameTalent == "Sanctuary" then -- Sanctuary, Protection, Tier 3
+					reduce = reduce +  currRank * 2; -- rank is 1..3, values are 2..6 % Crit reduce
+				end;
+			elseif clss == "DRUID" then -- Druid
+				if nameTalent == "Thick Hide" then -- Thick Hide, Feral Combat, Tier3
+					reduce = reduce +  currRank * 2; -- rank is 1..3, values are 2..6 % Crit reduce
+				end;
+			end;
+		end;
+	end;
+	
 
 
 
@@ -117,7 +154,7 @@ function TankInfo:Values()
 	end;
 	health = UnitHealth("player");
 	eh = floor(health / (1 - armorDR));
-	avoidance = floor((enemymiss + dodge + parry + 5) * 100 + 0.5) / 100;
+	avoidance = floor((enemymiss + dodge + parry) * 100 + 0.5) / 100;
 	mitigation = avoidance + block;
 	enemycrit = 5 + (bosslvl - level) * .2;
 
@@ -156,13 +193,13 @@ function TankInfo:OnTooltipShow()
 	local r2, g2, b2 = TankInfo.db.char.r2, TankInfo.db.char.g2, TankInfo.db.char.b2
 	TankInfo:UpdateLDB(); -- updating values before showing tooltip
 	self:AddLine(L['Defense Stats'],1,1,1);
-	self:AddDoubleLine(L['Enemymiss']..': ',(enemymiss + 5)..'%',r1, g1, b1,r1, g1, b1); -- adds enemymiss line
+	self:AddDoubleLine(L['Enemymiss']..': ',(enemymiss)..'%',r1, g1, b1,r1, g1, b1); -- adds enemymiss line
 	self:AddDoubleLine(L['Dodge']..': ',floor(dodge * 100 + 0.5) / 100 ..'%',r2, g2, b2,r2, g2, b2); -- adds dodge line
 	self:AddDoubleLine(L['Parry']..': ',floor(parry * 100 + 0.5) / 100 ..'%',r1, g1, b1,r1, g1, b1); -- adds parry line
 	self:AddDoubleLine(L['Avoidance']..': ',avoidance..'%',r2, g2, b2,r2, g2, b2); -- adds avoidance line
 	self:AddDoubleLine(L['dwAvoid']..': ',(avoidance + 24)..'%',r1, g1, b1,r1, g1, b1); -- adds dw avoidance line
 	self:AddDoubleLine(L['Block Chance']..': ',block..'%',r2, g2, b2,r2, g2, b2); -- adds block chance line
-	self:AddDoubleLine(L['Block Value']..': ',blockvalue,r1, g1, b1,r1, g1, b1); -- adds block value line
+	self:AddDoubleLine(L['Block Value']..': ',blockvalue..'%',r1, g1, b1,r1, g1, b1); -- adds block value line
 	self:AddDoubleLine(L['Mitigation']..': ',mitigation..'%',r2, g2, b2,r2, g2, b2); -- adds mitigation line
 	self:AddDoubleLine(L['dwMitigation']..': ',(mitigation + 24)..'%',r1, g1, b1,r1, g1, b1) -- adds dw mitigation line
 	self:AddDoubleLine(L['NormalHit']..': ',normalhit..'%',r2, g2, b2,r2, g2, b2); -- adds line for chance to get a normal hit
