@@ -94,7 +94,6 @@ function TankInfo:getArmor()
 end;
 
 function TankInfo:getCritReduce()
-	local reduce = GetDodgeBlockParryChanceFromDefense();
 --	local reduce = GetDodgeBlockParryChanceFromDefense();
 	local reduce = 0;
 	reduce = self:getCritReduceByTalents();
