@@ -2,7 +2,7 @@
 local ldb = LibStub:GetLibrary("LibDataBroker-1.1");
 
 local L = LibStub("AceLocale-3.0"):GetLocale("TankInfo");
-local TankInfo = TankInfo
+local TankInfo = _G["TankInfo"];
 
 -- creating ldb data object
 local doTable = {
@@ -10,7 +10,9 @@ local doTable = {
 	text = '|c0066ff00'..L["Avoidance: "]..'|r|c00ff0000'.."UNKNOWN|r", 
 	label = 'Broker TankInfo', 
 	icon = "Interface\\Icons\\Ability_Warrior_DefensiveStance",
-	OnClick = TankInfo.OnClick(),
+	OnClick = function (f, button)
+				_G["TankInfo"]:OnClick(f,button);
+			end,
 }
 TankInfo.dataobj = ldb:NewDataObject("Broker_Tankinfo", doTable)
 
@@ -21,6 +23,7 @@ local blockvalue;
 local armor, health, eh, armorDR;
 local avoidance, mitigation;
 local enemycrit, normalhit;
+local mastery;
 local defaults;
 
 -- default values for db
@@ -166,6 +169,7 @@ function TankInfo:Values()
 
 	normalhit = 100 - mitigation;
 	if (normalhit < 0) then normalhit = 0 end;
+	mastery = floor((GetMastery() * 100 + 0.5)/100;
 end;
 
 function TankInfo:UpdateLDB()
@@ -210,7 +214,11 @@ function TankInfo:OnTooltipShow()
 	self:AddDoubleLine(L['ArmorDR']..': ',floor(armorDR * 10000 + 0.5) / 100 ..'%',r2, g2, b2,r2, g2, b2); -- adds line for damage reduction by armor
 	self:AddDoubleLine(L['EH']..': ',eh,r1, g1, b1,r1, g1, b1); -- adds line for effective health
 	self:AddLine(' '); -- adds empty line
+	self:AddDoubleLine(L['Mastery']..': ',mastery,r2,g2,b2,r2,g2,b2); -- adds line for Mastery
+	self:AddLine(' '); -- adds empty line
 	self:AddDoubleLine(L['Enemy is level'],(bosslvl or "UNKNOWN"),1,1,1,1,1,1);
+	self:AddLine(' '); -- adds empty line
+	self:AddLine(L['Right-click']); -- adds line for right-click info
 end;
 
 -- happens when the mouse joins the ldb dataobject

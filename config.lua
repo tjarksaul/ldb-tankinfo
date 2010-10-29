@@ -1,10 +1,11 @@
 local addonName, addonData = ...;
-TankInfo = LibStub("AceAddon-3.0"):NewAddon("Broker_TankInfo", "AceConsole-3.0", "AceTimer-3.0", "AceEvent-3.0");
+local TankInfo = LibStub("AceAddon-3.0"):NewAddon("Broker_TankInfo", "AceConsole-3.0", "AceTimer-3.0", "AceEvent-3.0");
 local L = LibStub("AceLocale-3.0"):GetLocale("TankInfo");
 local AceConfig = LibStub("AceConfig-3.0");
 local AceConfigCmd = LibStub("AceConfigCmd-3.0");
 local AceConfigDialog = LibStub("AceConfigDialog-3.0");
 local AceConfigRegistry = LibStub("AceConfigRegistry-3.0");
+_G["TankInfo"] = TankInfo;
 
 TankInfo.blizopt = {
 	type = "group",
@@ -82,7 +83,7 @@ print("Set addonName to " .. addonName);
 function TankInfo:OnClick(self, button, down)
 	if (button == "RightButton") then
 		-- show options menu
-		InterfaceOptionsFrame_OpenToCategory(self.BlizzOptions);
+		InterfaceOptionsFrame_OpenToCategory(addonName);
 --[[	elseif (button == "LeftButton") then
 		-- show blizzard options panel
 		InterfaceOptionsFrame_OpenToCategory("Broker TankInfo"); ]]
