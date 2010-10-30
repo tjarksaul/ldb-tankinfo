@@ -169,7 +169,7 @@ function TankInfo:Values()
 
 	normalhit = 100 - mitigation;
 	if (normalhit < 0) then normalhit = 0 end;
-	mastery = floor((GetMastery() * 100 + 0.5)/100;
+	mastery = floor(GetMastery() * 100 + 0.5)/100;
 end;
 
 function TankInfo:UpdateLDB()
