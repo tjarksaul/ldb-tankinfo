@@ -154,7 +154,7 @@ function TankInfo:Values()
 	elseif (bosslvl < 81) then
 		armorDR = (armor / ((467.5 * bosslvl) + armor - 22167.5));
 	else
-		armorDR = (armor / (armor + 85 * bosslvl + 400))
+		armorDR = armor / ( armor + 2167.5 * bosslvl - 158167.5)
 	end;
 	health = UnitHealth("player");
 	eh = floor(health / (1 - armorDR));
