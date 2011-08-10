@@ -115,19 +115,19 @@ function TankInfo:getCritReduceByTalents()
 			local nameTalent, _, _, _, currRank, _ = GetTalentInfo(t,i);
 			
 			if (clss == "WARRIOR") then -- Warrior
-				if nameTalent == "Bastion of Defense" then -- Bastion of Defense, Protection, Tier 3
+				if nameTalent == L["Bastion of Defense"] then -- Bastion of Defense, Protection, Tier 3
 					reduce = reduce + currRank * 3; -- rank is 1..2, values are 3..6 % Crit reduce
 				end;
 			elseif clss == "DEATHKNIGHT" then -- Death Knight
-				if nameTalent == "Improved Blood Presence" then -- Improved Blood Presence, Blood, Tier 4
+				if nameTalent == L["Improved Blood Presence"] then -- Improved Blood Presence, Blood, Tier 4
 					reduce = reduce +  currRank * 3; -- rank is 1..2, values are 3..6 % Crit reduce
 				end;
 			elseif clss == "PALADIN" then -- Paladin
-				if nameTalent == "Sanctuary" then -- Sanctuary, Protection, Tier 3
+				if nameTalent == L["Sanctuary"] then -- Sanctuary, Protection, Tier 3
 					reduce = reduce +  currRank * 2; -- rank is 1..3, values are 2..6 % Crit reduce
 				end;
 			elseif clss == "DRUID" then -- Druid
-				if nameTalent == "Thick Hide" then -- Thick Hide, Feral Combat, Tier3
+				if nameTalent == L["Thick Hide"] then -- Thick Hide, Feral Combat, Tier3
 					reduce = reduce +  currRank * 2; -- rank is 1..3, values are 2..6 % Crit reduce
 				end;
 			end;
