@@ -68,8 +68,13 @@ function TankInfo:getBlockval()
 end
 
 function TankInfo:getBasicMiss()
-  
-  return 5;
+	local miss = 5;
+	if UnitRace("player") == "NightElf" then
+		miss += 2;
+	end;
+	miss = miss - (bosslvl - level) * .2;
+	if miss < 0 then miss = 0 end;
+	return miss;
 end
 
 
@@ -125,9 +130,12 @@ end;
 function TankInfo:Values()
 	level = UnitLevel("player");
 	bosslvl = self.db.char.bosslvl;
-	dodge = GetDodgeChance();
-	parry = GetParryChance();
-	block = floor(GetBlockChance() * 100 + 0.5) / 100;
+	dodge = GetDodgeChance() - (bosslvl - level) * .2;
+	if dodge < 0 then dodge = 0 end;
+	parry = GetParryChance() - (bosslvl - level) * .2;
+	if parry < 0 then parry = 0 end;
+	block = (floor(GetBlockChance() * 100 + 0.5) / 100) - (bosslvl - level) * .2;
+	if block < 0 then block = 0 end;
 	blockvalue = self:getBlockval();
 	enemymiss = self:getBasicMiss();
 	armor = self:getArmor();
