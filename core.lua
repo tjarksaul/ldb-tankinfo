@@ -64,24 +64,6 @@ function TankInfo:getBlockval()
     bval_mod = bval_mod + 0.05
   end
 
-  -- get block value modifier in talents
-  local numTabs = GetNumTalentTabs();
-  for t=1, numTabs do
-    local numTalents = GetNumTalents(t);
-    for i=1, numTalents do
-      local nameTalent, _, _, _, currRank, _ = GetTalentInfo(t,i);
-      if nameTalent == L["Shield Mastery"] or (nameTalent == L["Shield Specialization"] and clss ~= "WARRIOR") then
-        if clss == "SHAMAN" then
-          bval_mod = bval_mod + currRank * 5 / 100 -- rank is 1..5, values are 5%, 10%, 15%, 20%, 25%
-        else
-          bval_mod = bval_mod + currRank * 15 / 100 -- rank is 1, 2 values are: 15%, 30%
-        end
-
-        break
-      end
-    end
-  end
-
   return bval, floor(bval_unmodified / bval_mod)
 end
 
@@ -154,7 +136,7 @@ function TankInfo:Values()
 	elseif (bosslvl < 81) then
 		armorDR = (armor / ((467.5 * bosslvl) + armor - 22167.5));
 	else
-		armorDR = armor / ( armor + (2167.5 * bosslvl - 158167.5))
+		armorDR = armor / ( armor + (2167.5 * bosslvl - 158167.5));
 	end;
 	health = UnitHealth("player");
 	eh = floor(health / (1 - armorDR));
