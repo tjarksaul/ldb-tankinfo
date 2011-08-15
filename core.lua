@@ -70,7 +70,7 @@ end
 function TankInfo:getBasicMiss()
 	local miss = 5;
 	if UnitRace("player") == "NightElf" then
-		miss += 2;
+		miss = miss + 2;
 	end;
 	miss = miss - (bosslvl - level) * .2;
 	if miss < 0 then miss = 0 end;
