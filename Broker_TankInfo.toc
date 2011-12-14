@@ -1,6 +1,6 @@
-﻿## Interface: 40200
+﻿## Interface: 40300
 ## Title: Broker TankInfo
-## Notes: Provides information needed by tanks in a ldb-plugin
+## Notes: Provides information needed by tanks in an ldb plugin
 ## Author: laroawen
 ## Version: @project-version@
 ## SavedVariables: TankInfoDB
