@@ -25,6 +25,8 @@ local avoidance, mitigation;
 local enemycrit, normalhit;
 local mastery;
 local defaults;
+local clss;
+local mt, mb;
 
 -- default values for db
 do
@@ -93,7 +95,7 @@ end;
 
 function TankInfo:getCritReduceByTalents()
 	local numTabs = GetNumTalentTabs(false);
-	local _, clss = UnitClass("player");
+	_, clss = UnitClass("player");
 	
 	local reduce = 0;
 	for t=1, numTabs do
@@ -160,6 +162,8 @@ function TankInfo:Values()
 	normalhit = 100 - mitigation;
 	if (normalhit < 0) then normalhit = 0 end;
 	mastery = floor(GetMastery() * 100 + 0.5)/100;
+	
+	mt, mb = self:GetMasteryBonus();
 end;
 
 function TankInfo:UpdateLDB()
@@ -205,6 +209,9 @@ function TankInfo:OnTooltipShow()
 	self:AddDoubleLine(L['EH']..': ',eh,r1, g1, b1,r1, g1, b1); -- adds line for effective health
 	self:AddLine(' '); -- adds empty line
 	self:AddDoubleLine(L['Mastery']..': ',mastery,r2,g2,b2,r2,g2,b2); -- adds line for Mastery
+	if mt then
+		self:AddDoubleLine(mt..': ',mb,r1,g1,b1,r1,g1,b1); -- adds line for mastery bonus
+	end;
 	self:AddLine(' '); -- adds empty line
 	self:AddDoubleLine(L['Enemy is level'],(bosslvl or "UNKNOWN"),1,1,1,1,1,1);
 	self:AddLine(' '); -- adds empty line
@@ -278,4 +285,31 @@ function TankInfo:OnDisable()
 --	self:UnregisterEvent("UNIT_AURA");
 --	self:CancelTimer(self.updateInterval);
 	self.db.char.enabled = false;
-	end;
+end;
+
+function TankInfo:GetMasteryBonus()
+	if (clss == "WARRIOR") then
+		if (GetPrimaryTalentTree() == 3) then
+			local critblock = floor(((GetBlockChance()/100 * GetMastery()*1.5) * 100) + 0.5) / 100;
+			return L["Critical Block Chance"], (critblock)..'%';
+		else
+			return false;
+		end;
+	elseif (clss == "DRUID") then
+		if (GetPrimaryTalentTree() == 2) then
+			local sd = floor((GetMastery()*4) * 100 + 0.5) / 100;
+			return L["Damage absorbed by Savage Defense"], sd..'%';
+		else
+			return false;
+		end;
+	elseif (clss == "DEATHKNIGHT") then
+		if (GetPrimaryTalentTree() == 1) then
+			local bs = floor((GetMastery()*6.25) * 100 + 0.5) / 100;
+			return L["Blood Shield absorption"], bs..'%';
+		else
+			return false;
+		end;
+	else
+		return false;
+	end
+end
