@@ -36,7 +36,9 @@ do
 			bosslvl = UnitLevel('player') + 3,
 			r1, g1, b1 = 0,0.4,1,
 			r2, g2, b2 = 0,1,0,
-			already_launched = false;
+			already_launched = false,
+			autoupdate = false;
+			updateinterval = 10;
 		}
 	}
 end;
@@ -263,11 +265,13 @@ function TankInfo:OnEnable()
 --@end-debug@
 	-- registering events
 	self:RegisterEvent("PLAYER_LEVEL_UP", "levelup");
-	self:RegisterEvent("UNIT_INVENTORY_CHANGED", "Values");
+	self:RegisterEvent("UNIT_INVENTORY_CHANGED", "UpdateLDB");
 --	self:RegisterEvent("UNIT_AURA", "Aura");
 	-- getting/updating values
 	self:Values();
---	self.updateInterval = self:ScheduleRepeatingTimer("UpdateLDB", 5);
+	if self.db.char.autoupdate then
+		self.updateInterval = self:ScheduleRepeatingTimer("UpdateLDB", self.db.char.updateinterval);
+	end
 	self:UpdateLDB();
 	self.db.char.enabled = true;
 	if not self.db.char.already_launched then
@@ -283,7 +287,7 @@ function TankInfo:OnDisable()
 	self:UnregisterEvent("PLAYER_LEVEL_UP");
 	self:UnregisterEvent("UNIT_INVENTORY_CHANGED");
 --	self:UnregisterEvent("UNIT_AURA");
---	self:CancelTimer(self.updateInterval);
+	self:CancelTimer(self.updateInterval);
 	self.db.char.enabled = false;
 end;
 

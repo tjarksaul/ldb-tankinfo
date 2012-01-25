@@ -48,6 +48,41 @@ TankInfo.blizopt = {
 				}
 			}
 		},
+		updopt = {
+			name = L["Update settings"],
+			desc = L["Configure automatic update of Broker display"],
+			type = "group",
+			args = {
+				enable = {
+					name = L["Enable automatic update"],
+					desc = L["Enables automatic updates of Broker display. This may cause high CPU usage."],
+					descStyle = "inline",
+					type = "toggle",
+					set = function(info, val) 
+						if val then 
+							TankInfo.updateInterval = TankInfo:ScheduleRepeatingTimer("UpdateLDB", TankInfo.db.char.updateinterval) 
+						else
+							TankInfo:CancelTimer(TankInfo.updateInterval)
+						end
+						TankInfo.db.char.autoupdate = val
+					end,
+					get = function(info) return TankInfo.db.char.autoupdate end
+				},
+				updateinterval = {
+					name = L["Update interval"],
+					desc = L["Sets the update interval of Broker display to given amount of seconds. Shorter periods increase CPU usage"],
+					type = "range",
+					step = 0.25,
+					min = 1,
+					max = 600,
+					softMin = 2,
+					softMax = 60,
+					disabled = function(info) return not TankInfo.db.char.autoupdate end,
+					get = function(info) return TankInfo.db.char.updateinterval end,
+					set = function(info, val) TankInfo.db.char.updateinterval = val; TankInfo.updateInterval = TankInfo:ScheduleRepeatingTimer("UpdateLDB", TankInfo.db.char.updateinterval) end
+				}
+			}
+		},
 		reset = {
 			name = L["Reset"],
 			desc = L["Reset configuration to defaults"],
